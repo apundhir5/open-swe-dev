@@ -62,7 +62,7 @@ async def test_home_logged_in_shows_username():
     Test that after successful login, follow-up GET / with returned cookie 
     contains 'Welcome, <strong>admin</strong>' (or equivalent clear greeting with "admin").
     """
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         # First, perform login to get session cookie
         login_response = await client.post(
             "/login",
@@ -139,6 +139,7 @@ async def test_health_endpoint():
         
         assert response.status_code == 200
         assert response.json() == {"status": "healthy"}
+
 
 
 
