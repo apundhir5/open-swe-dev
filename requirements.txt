@@ -1,0 +1,18 @@
+# Core web framework and server
+fastapi>=0.104.0
+uvicorn>=0.34.2
+
+# Template engine
+jinja2>=3.1.6
+
+# Security and authentication
+itsdangerous>=2.2.0
+passlib[bcrypt]>=1.7.4
+
+# Testing dependencies
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.28.1
+
+# Production server for Azure deployment
+gunicorn>=21.2.0
