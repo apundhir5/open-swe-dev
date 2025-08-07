@@ -45,7 +45,7 @@ async def test_login_failure_redirects_with_error():
     """
     Test that POST /login with wrong password returns 302 to /login?error=1.
     """
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/login",
             data={"username": "admin", "password": "wrongpassword"},
@@ -139,5 +139,6 @@ async def test_health_endpoint():
         
         assert response.status_code == 200
         assert response.json() == {"status": "healthy"}
+
 
 
