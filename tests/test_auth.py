@@ -90,7 +90,7 @@ async def test_login_form_shows_error():
     """
     Additional test to verify login form shows error message when error=1 parameter is present.
     """
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/login?error=1")
         
         assert response.status_code == 200
@@ -139,6 +139,7 @@ async def test_health_endpoint():
         
         assert response.status_code == 200
         assert response.json() == {"status": "healthy"}
+
 
 
 
