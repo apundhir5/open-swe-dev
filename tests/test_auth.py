@@ -102,7 +102,7 @@ async def test_logout_clears_cookie():
     """
     Additional test to verify logout functionality clears the session cookie.
     """
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         # First login to get a session
         login_response = await client.post(
             "/login",
@@ -139,6 +139,7 @@ async def test_health_endpoint():
         
         assert response.status_code == 200
         assert response.json() == {"status": "healthy"}
+
 
 
 
