@@ -24,7 +24,7 @@ async def test_login_success_sets_cookie_and_redirects():
     Test that POST /login with admin/admin123 returns 302, 
     response has set-cookie, and location header points to /.
     """
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/login",
             data={"username": "admin", "password": "admin123"},
@@ -139,4 +139,5 @@ async def test_health_endpoint():
         
         assert response.status_code == 200
         assert response.json() == {"status": "healthy"}
+
 
