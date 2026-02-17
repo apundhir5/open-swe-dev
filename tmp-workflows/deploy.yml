@@ -1,0 +1,47 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Only run if AZURE_WEBAPP_NAME secret is present
+    if: ${{ secrets.AZURE_WEBAPP_NAME != '' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create deployment package
+      run: |
+        # Create a clean directory for deployment
+        mkdir -p deployment
+        
+        # Copy application files
+        cp -r app deployment/
+        cp requirements.txt deployment/
+        
+        # Create startup script for Azure App Service
+        echo "gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind=0.0.0.0:8000" > deployment/startup.sh
+        chmod +x deployment/startup.sh
+        
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: './deployment'
+        startup-command: 'gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind=0.0.0.0:8000'
